@@ -51,8 +51,8 @@ print("HOP ON 2.1 SERVER RUNNER - BY SAXASHITTER")
 def update(force_make=False):
     global srb2
 
-	if not force_make:
-		print("Checking for updates...")
+    if not force_make:
+        print("Checking for updates...")
 
     if git_pull_change("/root/"+MODS_PATH):
         print("Update found! Making build...")
