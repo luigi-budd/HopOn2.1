@@ -3,11 +3,11 @@ import subprocess
 import os
 import signal
 
+from git import Repo
+
 # VARIABLES
 SRB2_PATH = "SRB2/bin/lsdl2srb2"
-HEIST_REPO = ".srb2/repos/Fangs-Heist"
-
-from git import Repo
+MODS_PATH = ".srb2/repos/HopOn2.1"
 
 restarting = False
 
@@ -46,33 +46,34 @@ def run_make(target=None, makefile_path=None):
     except Exception as e:
          return -1, "", f"An unexpected error occurred: {e}"
 
-print("HEIST SERVER RUNNER - BY SAXASHITTER")
+print("HOP ON 2.1 SERVER RUNNER - BY SAXASHITTER")
 
 def update(force_make=False):
     global srb2
 
-    print("Checking for updates...")
+	if not force_make:
+		print("Checking for updates...")
 
-    if git_pull_change("/root/"+HEIST_REPO):
+    if git_pull_change("/root/"+MODS_PATH):
         print("Update found! Making build...")
-        run_make(None, "/root/"+HEIST_REPO)
+        run_make(None, "/root/"+MODS_PATH)
         print("Finished!")
     elif force_make:
         print("Making build...")
-        run_make(None, "/root/"+HEIST_REPO)
+        run_make(None, "/root/"+MODS_PATH)
         print("Finished!")
     else:
         print("No updates. Finished!")
 
     print("Running SRB2...")
-    srb2 = subprocess.Popen([SRB2_PATH+" -dedicated -room 33"], shell=True)
+    srb2 = subprocess.Popen(["/root/"+SRB2_PATH+" -dedicated -room 33"], shell=True)
 
 update()
 
 while True:
     running = srb2.poll() is None
 
-    if running and not restarting and git_pull_change("/root/"+HEIST_REPO):
+    if running and not restarting and git_pull_change("/root/"+MODS_PATH):
         print("Update detected, restarting!")
         f = open(".srb2/luafiles/client/servercomms.txt", "w")
         f.write("quit")
